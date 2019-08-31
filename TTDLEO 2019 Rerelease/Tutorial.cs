@@ -9,14 +9,14 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TTDLEO_2019_Rerelease
 {
-    enum TutorialState { INTRO, FIRSTLEVEL, SECONDLEVEL, MAINMENU, OPTIONS, SHOP, LORE }
+    enum TutorialState { FIRSTLEVEL, POSTFIRSTLEVEL, SECONDLEVEL, MAINMENU, OPTIONS, SHOP, LORE }
 
     class Tutorial
     {
         BattleManager battleManager;
         SpriteFont font, mediumFont;
         Button tutorialProceedButton;
-        Texture2D background, textBar, popUpTexture;
+        Texture2D background, textBar, popUpTexture, buttonTexture;
 
         Button speedUpButton, slowDownButton;
         Button replayButton, menuButton, nextButton;
@@ -47,8 +47,9 @@ namespace TTDLEO_2019_Rerelease
 
             this.textBar = textBar;
             this.popUpTexture = popUpTexture;
+            this.buttonTexture = buttonTexture;
 
-            tutorialState = TutorialState.INTRO;
+            tutorialState = TutorialState.FIRSTLEVEL;
 
             updatesPerFrame = 5;
         }
@@ -56,14 +57,26 @@ namespace TTDLEO_2019_Rerelease
         public void Update(GameTime gameTime, ContentManager content, int timerSeconds, Rectangle mouseRectangle, float scaleX,
             float scaleY, int screenWidth, int screenHeight)
         {
-            battleManager.Update(content, timerSeconds, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight,
+            if (tutorialState == TutorialState.FIRSTLEVEL || tutorialState == TutorialState.SECONDLEVEL)
+            {
+                CheckForEndGame(content);
+                battleManager.Update(content, timerSeconds, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight,
                  updatesPerFrame, 0);
-
-            
+            }
 
             nextButton.Update(mouseRectangle, scaleX, scaleY);
             menuButton.Update(mouseRectangle, scaleX, scaleY);
             tutorialProceedButton.Update(mouseRectangle, scaleX, scaleY);
+
+            if (tutorialState == TutorialState.POSTFIRSTLEVEL)
+            {
+                if (nextButton.IsActivated)
+                {
+                    tutorialState = TutorialState.SECONDLEVEL;
+                    showPopUp = false;
+                    battleManager = new BattleManager(content, buttonTexture, -1);
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle mouseRectangle, float scaleX, float scaleY)
@@ -78,6 +91,16 @@ namespace TTDLEO_2019_Rerelease
             {
                 case TutorialState.FIRSTLEVEL:
                     spriteBatch.DrawString(font, "Level: T1", new Vector2(105, 15), Color.Black);
+
+                    spriteBatch.DrawString(font, "Welcome to Tower Conquest!  In this game, you send out units to defend your", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "tower and attack your enemy's tower.  To begin, click the commoner button to", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "send out a commoner, the most basic soldier in the game.", new Vector2(135f, 410f), Color.Black);
+                    break;
+                case TutorialState.POSTFIRSTLEVEL:
+                    spriteBatch.DrawString(font, "Congratulations!  You've made it past the first tutorial level!  This screen is", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "shown after every level.  Here you can find stats regarding the level, replay the", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "level, move on to the next level, or return to the menu.  For now, click on the", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "Next Level button to proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
                     break;
                 case TutorialState.SECONDLEVEL:
                     spriteBatch.DrawString(font, "Level: T2", new Vector2(105, 15), Color.Black);
@@ -106,44 +129,33 @@ namespace TTDLEO_2019_Rerelease
             }
 
             spriteBatch.Draw(textBar, new Vector2(125f, 375f), new Rectangle?(), Color.White * 0.6f, 0.0f, Vector2.Zero, 0.85f, SpriteEffects.None, 1f);
-            switch (tutorialState)
+        }
+
+        void CheckForEndGame(ContentManager content)
+        {
+            ENDGAMERESULT result = battleManager.CheckForEndGame(content);
+
+            switch (result)
             {
-                case TutorialState.INTRO:
-                    spriteBatch.DrawString(font, "Welcome to Tower Conquest!  In this game, you send out units to defend your", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "tower and attack your enemy's tower.  To begin, click the commoner button to", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "send out a commoner, the most basic soldier in the game.", new Vector2(135f, 410f), Color.Black);
+                case ENDGAMERESULT.WIN:
+                    didWin = true;
+                    showPopUp = true;
+                    didWin = true;
+
+                    Main.gold += 50;
+                    Main.goldGained += 50;
+
+                    updatesPerFrame = 1;
+
+                    if (tutorialState == TutorialState.FIRSTLEVEL)
+                        tutorialState = TutorialState.POSTFIRSTLEVEL;
                     break;
-                /**case 1:
-                    spriteBatch.DrawString(font, "Now watch as the swordsman proceeds to attack the enemy's tower.  It won't", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "take long for the swordsman to defeat the enemy tower because it is one of the", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "strongest units in the game.", new Vector2(135f, 410f), Color.Black);
+                case ENDGAMERESULT.LOSS:
+                    showPopUp = true;
+                    didWin = false;
+
+                    updatesPerFrame = 1;
                     break;
-                case 2:
-                    spriteBatch.DrawString(font, "Now that the swordsman has defeated the enemy's tower, you have won this", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "level.  Because of this, you have earned some gold, which will be added to your", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "running total that carries over throughout the game.  Gold can be used to buy", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "soldiers and eventually to buy upgrades.", new Vector2(135f, 425f), Color.Black);
-                    tutorialProceedButton.Draw(spriteBatch);
-                    spriteBatch.DrawString(font, "Proceed", new Vector2((float)(tutorialProceedButton.Rectangle.X + 7), (float)tutorialProceedButton.Rectangle.Y), Color.Black);
-                    break;
-                case 3:
-                    spriteBatch.DrawString(font, "This screen is shown whenever you finish a level.  From here, you can easily return", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "to the menu, play the current level again, or move on to the next level if you", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "won.  You can also see statistics related about the battle you just fought.  Click", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "on the Next Level button to continue the tutorial.", new Vector2(135f, 425f), Color.Black);
-                    spriteBatch.DrawString(font, "", new Vector2(135f, 440f), Color.Black);
-                    break;
-                case 4:
-                    spriteBatch.DrawString(font, "In real levels, enemies will appear to fight your soldiers and try to attack", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "your tower.  For this level, though, they will not hurt your tower.  You must", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "be ready for them.  Using your current gold, send out some soldiers and try to ", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "win this level on your own. ", new Vector2(135f, 425f), Color.Black);
-                    break;
-                case 5:
-                    spriteBatch.DrawString(font, "Congratulations!  You beat the level on your own!  Now you're ready for the", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "real game.  Click the Menu button to go to the main menu and begin the fight", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "against Lord Morgoroth!.", new Vector2(135f, 410f), Color.Black);
-                    break;**/
             }
         }
     }

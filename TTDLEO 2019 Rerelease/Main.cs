@@ -189,6 +189,7 @@ namespace TTDLEO_2019_Rerelease
                 PlayMainGameMusic();
 
                 textBar = Content.Load<Texture2D>("textBar");
+                popUpTexture = Content.Load<Texture2D>("popUp");
 
                 tutorial = new Tutorial(Content, buttonTexture, background, textBar, popUpTexture);
             }
