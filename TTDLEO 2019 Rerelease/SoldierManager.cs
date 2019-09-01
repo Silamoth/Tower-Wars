@@ -347,6 +347,8 @@ namespace TTDLEO_2019_Rerelease
                     if (flag)
                         playerSupportTroop.IsMovingForward = true;
                 }
+
+                UpdateSoldiers(gameTime, screenWidth, screenHeight, content, corpses);
             }
 
             healths = new List<TroopHealth>();
@@ -360,8 +362,6 @@ namespace TTDLEO_2019_Rerelease
                 healths.Add(new TroopHealth(enemyRangedTroop.Position, enemyRangedTroop.Health, enemyRangedTroop.Name, Color.Red));
             foreach (SupportSoldier playerSupportTroop in playerSupportTroops)
                 healths.Add(new TroopHealth(playerSupportTroop.Position, playerSupportTroop.Health, playerSupportTroop.Name, Color.Blue));
-
-            UpdateSoldiers(gameTime, screenWidth, screenHeight, content, corpses);
         }
 
         public void Draw(SpriteBatch spriteBatch)

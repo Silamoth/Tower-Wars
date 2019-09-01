@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace TTDLEO_2019_Rerelease
 {
-    enum TutorialState { FIRSTLEVEL, POSTFIRSTLEVEL, SECONDLEVEL, MAINMENU, OPTIONS, SHOP, LORE }
+    enum TutorialState { FIRSTLEVEL, POSTFIRSTLEVEL, SECONDLEVEL, POSTSECONDLEVELONE, POSTSECONDLEVELTWO,
+        THIRDLEVELSWORDSMAN, THIRDLEVELARCHER, THIRDLEVELMEDIC, THIRDLEVELGENERAL, MAINMENU, OPTIONS, SHOP, LORE }
 
     class Tutorial
     {
@@ -26,6 +28,8 @@ namespace TTDLEO_2019_Rerelease
         TutorialState tutorialState;
 
         int updatesPerFrame;
+        double timer;
+        int timerSeconds;
 
         public Tutorial(ContentManager content, Texture2D buttonTexture, Texture2D background, Texture2D textBar, Texture2D popUpTexture)
         {
@@ -52,12 +56,22 @@ namespace TTDLEO_2019_Rerelease
             tutorialState = TutorialState.FIRSTLEVEL;
 
             updatesPerFrame = 5;
+            timer = 0;
+            timerSeconds = 0;
         }
 
-        public void Update(GameTime gameTime, ContentManager content, int timerSeconds, Rectangle mouseRectangle, float scaleX,
-            float scaleY, int screenWidth, int screenHeight)
+        public void Update(GameTime gameTime, ContentManager content, Rectangle mouseRectangle, float scaleX,
+            float scaleY, int screenWidth, int screenHeight, float startTime)
         {
-            if (tutorialState == TutorialState.FIRSTLEVEL || tutorialState == TutorialState.SECONDLEVEL)
+            timer += gameTime.ElapsedGameTime.TotalSeconds - (double)startTime;
+            while (timer > 1.0)
+            {
+                timer--;
+                timerSeconds++;
+            }
+
+            if (tutorialState == TutorialState.FIRSTLEVEL || tutorialState == TutorialState.SECONDLEVEL || tutorialState == TutorialState.THIRDLEVELSWORDSMAN
+                || tutorialState == TutorialState.THIRDLEVELARCHER)
             {
                 CheckForEndGame(content);
                 battleManager.Update(content, timerSeconds, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight,
@@ -74,7 +88,28 @@ namespace TTDLEO_2019_Rerelease
                 {
                     tutorialState = TutorialState.SECONDLEVEL;
                     showPopUp = false;
-                    battleManager = new BattleManager(content, buttonTexture, -1);
+                    battleManager = new BattleManager(content, buttonTexture, -2);
+                    timerSeconds = 0;
+                    timer = 0;
+
+                    battleManager.AddEnemy(new Enemy(1, 7));
+                    battleManager.AddEnemy(new Enemy(1, 11));
+                }
+            }
+            else if (tutorialState == TutorialState.POSTSECONDLEVELONE)
+            {
+                if (Keyboard.GetState().GetPressedKeys().Length > 0)
+                    tutorialState = TutorialState.POSTSECONDLEVELTWO;
+            }
+            else if (tutorialState == TutorialState.POSTSECONDLEVELTWO)
+            {
+                if (nextButton.IsActivated)
+                {
+                    tutorialState = TutorialState.THIRDLEVELSWORDSMAN;
+                    showPopUp = false;
+                    battleManager = new BattleManager(content, buttonTexture, -3);
+                    timerSeconds = 0;
+                    timer = 0;
                 }
             }
         }
@@ -104,8 +139,34 @@ namespace TTDLEO_2019_Rerelease
                     break;
                 case TutorialState.SECONDLEVEL:
                     spriteBatch.DrawString(font, "Level: T2", new Vector2(105, 15), Color.Black);
+
+                    spriteBatch.DrawString(font, "In all other levels, you will have enemies to fight.  Send out Commoners like you", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "did last level in order to fight these enemies and attack their tower.", new Vector2(135f, 395f), Color.Black);
+                    //spriteBatch.DrawString(font, "level, move on to the next level, or return to the menu.  For now, click on the", new Vector2(135f, 410f), Color.Black);
+                    //spriteBatch.DrawString(font, "Next Level button to proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
+
                     speedUpButton.Draw(spriteBatch);
                     slowDownButton.Draw(spriteBatch);
+                    break;
+                case TutorialState.POSTSECONDLEVELONE:
+                    spriteBatch.DrawString(font, "As you can see, you will have to spend gold in order to beat levels.  You must", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "be smart about how you spend your gold or else you will run out.  For example, ", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "don't send out a very strong unit like a Swordsman against something weak like", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "a Commoner.", new Vector2(135f, 425), Color.Black);
+
+                    spriteBatch.DrawString(font, "Press any button to continue...", new Vector2(300f, 355f), Color.White);
+                    break;
+
+                case TutorialState.POSTSECONDLEVELTWO:
+                    spriteBatch.DrawString(font, "Now that you've experienced the basics of combat, let's explore some more", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "advanced soldiers and their capabilities.  Click on the Next Level button to", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "begin.", new Vector2(135f, 410f), Color.Black);
+                    break;
+                case TutorialState.THIRDLEVELSWORDSMAN:
+                    spriteBatch.DrawString(font, "There are several soldiers specializing in melee combat.  They effectively", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "function as stronger versions of the Commoner you used before.  These include", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "the Tough Guy, Brute, and Swordsman.  For now, click the Swordsman button to", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "send out a Swordsman.", new Vector2(135f, 425), Color.Black);
                     break;
             }
 
@@ -149,6 +210,9 @@ namespace TTDLEO_2019_Rerelease
 
                     if (tutorialState == TutorialState.FIRSTLEVEL)
                         tutorialState = TutorialState.POSTFIRSTLEVEL;
+
+                    else if (tutorialState == TutorialState.SECONDLEVEL)
+                        tutorialState = TutorialState.POSTSECONDLEVELONE;
                     break;
                 case ENDGAMERESULT.LOSS:
                     showPopUp = true;

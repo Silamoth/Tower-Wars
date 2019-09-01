@@ -294,8 +294,8 @@ namespace TTDLEO_2019_Rerelease
             else if (this.state == States.GAMBLING)
                 UpdateInvesting();
             else if (this.state == States.TUTORIAL)
-                tutorial.Update(gameTime, Content, timerSeconds, mouseRectangle, scaleX, scaleY,
-                    Window.ClientBounds.Width, Window.ClientBounds.Height);
+                tutorial.Update(gameTime, Content, mouseRectangle, scaleX, scaleY,
+                    Window.ClientBounds.Width, Window.ClientBounds.Height, startTime);
             else if (this.state == States.OPTIONS)
                 UpdateOptions();
             else if (this.state == States.FINALBOSS)
@@ -312,7 +312,7 @@ namespace TTDLEO_2019_Rerelease
                     canSwitchMenus = true;
                 }
             }
-            if (this.state == States.TOWERS || this.state == States.UPGRADING || this.state == States.OPTIONS)
+            if (this.state == States.TOWERS || this.state == States.UPGRADING || this.state == States.OPTIONS || this.state == States.TUTORIAL)
             {
                 if (incrementButtonTimer)
                     ++buttonTimer;
