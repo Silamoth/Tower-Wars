@@ -70,16 +70,49 @@ namespace TTDLEO_2019_Rerelease
                 timerSeconds++;
             }
 
+            speedUpButton.Update(mouseRectangle, scaleX, scaleY);
+            slowDownButton.Update(mouseRectangle, scaleX, scaleY);
+
             if (tutorialState == TutorialState.FIRSTLEVEL || tutorialState == TutorialState.SECONDLEVEL || tutorialState == TutorialState.THIRDLEVELSWORDSMAN
-                || tutorialState == TutorialState.THIRDLEVELARCHER)
+                || tutorialState == TutorialState.THIRDLEVELARCHER || tutorialState == TutorialState.THIRDLEVELMEDIC || tutorialState == TutorialState.THIRDLEVELGENERAL)
             {
                 CheckForEndGame(content);
                 battleManager.Update(content, timerSeconds, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight,
                  updatesPerFrame, 0);
+
+                if (speedUpButton.IsHovered)
+                {
+                    if (Main.canClick && speedUpButton.IsActivated)
+                    {
+                        updatesPerFrame++;
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                    }
+                    Main.hoverRectangle = new Rectangle((int)((double)mouseRectangle.X / (double)scaleX), (int)((double)(mouseRectangle.Y - 50) / (double)scaleY), 180, 75);
+                    Main.hoverTextLineOne = "Speed up the rate at";
+                    Main.hoverTextLineTwo = "which times passes";
+                    Main.hoverTextLineThree = "";
+                }
+
+                if (slowDownButton.IsHovered)
+                {
+                    if (Main.canClick && slowDownButton.IsActivated)
+                    {
+                        if (updatesPerFrame > 1)
+                            updatesPerFrame--;
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                    }
+                    Main.hoverRectangle = new Rectangle((int)((double)mouseRectangle.X / (double)scaleX), (int)((double)(mouseRectangle.Y - 50) / (double)scaleY), 180, 75);
+                    Main.hoverTextLineOne = "Slow down the rate at";
+                    Main.hoverTextLineTwo = "which times passes";
+                    Main.hoverTextLineThree = "";
+                }
             }
 
             nextButton.Update(mouseRectangle, scaleX, scaleY);
             menuButton.Update(mouseRectangle, scaleX, scaleY);
+            replayButton.Update(mouseRectangle, scaleX, scaleY);
             tutorialProceedButton.Update(mouseRectangle, scaleX, scaleY);
 
             if (tutorialState == TutorialState.POSTFIRSTLEVEL)
@@ -122,6 +155,9 @@ namespace TTDLEO_2019_Rerelease
 
             battleManager.Draw(spriteBatch, mouseRectangle, scaleX, scaleY);
 
+            speedUpButton.Draw(spriteBatch);
+            slowDownButton.Draw(spriteBatch);
+
             switch (tutorialState)
             {
                 case TutorialState.FIRSTLEVEL:
@@ -144,9 +180,6 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "did last level in order to fight these enemies and attack their tower.", new Vector2(135f, 395f), Color.Black);
                     //spriteBatch.DrawString(font, "level, move on to the next level, or return to the menu.  For now, click on the", new Vector2(135f, 410f), Color.Black);
                     //spriteBatch.DrawString(font, "Next Level button to proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
-
-                    speedUpButton.Draw(spriteBatch);
-                    slowDownButton.Draw(spriteBatch);
                     break;
                 case TutorialState.POSTSECONDLEVELONE:
                     spriteBatch.DrawString(font, "As you can see, you will have to spend gold in order to beat levels.  You must", new Vector2(135f, 380f), Color.Black);
@@ -156,7 +189,6 @@ namespace TTDLEO_2019_Rerelease
 
                     spriteBatch.DrawString(font, "Press any button to continue...", new Vector2(300f, 355f), Color.White);
                     break;
-
                 case TutorialState.POSTSECONDLEVELTWO:
                     spriteBatch.DrawString(font, "Now that you've experienced the basics of combat, let's explore some more", new Vector2(135f, 380f), Color.Black);
                     spriteBatch.DrawString(font, "advanced soldiers and their capabilities.  Click on the Next Level button to", new Vector2(135f, 395f), Color.Black);
@@ -167,6 +199,16 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "function as stronger versions of the Commoner you used before.  These include", new Vector2(135f, 395f), Color.Black);
                     spriteBatch.DrawString(font, "the Tough Guy, Brute, and Swordsman.  For now, click the Swordsman button to", new Vector2(135f, 410f), Color.Black);
                     spriteBatch.DrawString(font, "send out a Swordsman.", new Vector2(135f, 425), Color.Black);
+                    break;
+                case TutorialState.THIRDLEVELARCHER:
+                    spriteBatch.DrawString(font, "Sometimes you may find you want a soldier that can attack from a distance.  The", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "Archer is perfect for this.  Try sending out an Archer to see how it works.  Note", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "that the Archer can attack from behind another soldier.", new Vector2(135f, 410f), Color.Black);
+                    break;
+                case TutorialState.THIRDLEVELMEDIC:
+                    spriteBatch.DrawString(font, "Not all soldiers are around to fight.  Some provide support to other soldiers.  For", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "example, the Medic can heal soldiers in front of it.  Try sending out a Swordsman", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "followed by a Medic to see this in action.", new Vector2(135f, 410f), Color.Black);
                     break;
             }
 
@@ -210,9 +252,26 @@ namespace TTDLEO_2019_Rerelease
 
                     if (tutorialState == TutorialState.FIRSTLEVEL)
                         tutorialState = TutorialState.POSTFIRSTLEVEL;
-
                     else if (tutorialState == TutorialState.SECONDLEVEL)
                         tutorialState = TutorialState.POSTSECONDLEVELONE;
+                    else if (tutorialState == TutorialState.THIRDLEVELSWORDSMAN)
+                    {
+                        tutorialState = TutorialState.THIRDLEVELARCHER;
+                        battleManager = new BattleManager(content, buttonTexture, -4);
+                        showPopUp = false;
+                    }
+                    else if (tutorialState == TutorialState.THIRDLEVELARCHER)
+                    {
+                        tutorialState = TutorialState.THIRDLEVELMEDIC;
+                        battleManager = new BattleManager(content, buttonTexture, -5);
+                        showPopUp = false;
+                    }
+                    else if (tutorialState == TutorialState.THIRDLEVELMEDIC)
+                    {
+                        tutorialState = TutorialState.THIRDLEVELGENERAL;
+                        battleManager = new BattleManager(content, buttonTexture, -6);
+                        showPopUp = false;
+                    }
                     break;
                 case ENDGAMERESULT.LOSS:
                     showPopUp = true;

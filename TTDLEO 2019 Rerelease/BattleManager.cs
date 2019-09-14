@@ -131,6 +131,45 @@ namespace TTDLEO_2019_Rerelease
                     return;
                 }
 
+                if (currentLevel == -4)
+                {
+                    if (purchase == SoldierPurchases.ARCHER && (soldierManager.PlayerSoldierCount + playerQueue.Count) < 3)
+                    {
+                        playerQueue.Add((Queueable)new Archer(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                        Main.gold -= 30;
+                        Main.goldSpent += 30;
+                        queue.AddMember("Archer");
+                    }
+
+                    return;
+                }
+
+                if (currentLevel == -5)
+                {
+                    if (purchase == SoldierPurchases.MEDIC && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 1)
+                    {
+                        playerQueue.Add((Queueable)new Medic(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                        Main.gold -= 50;
+                        Main.goldSpent += 50;
+                        queue.AddMember("Medic");
+                    }
+                    if (purchase == SoldierPurchases.SWORDSMAN && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
+                    {
+                        playerQueue.Add((Queueable)new Swordsman(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                        Main.gold -= 50;
+                        Main.goldSpent += 50;
+                        queue.AddMember("Swordsman");
+                    }
+
+                    return;
+                }
+
                 switch (purchase)
                 {
                     case SoldierPurchases.COMMONER:
