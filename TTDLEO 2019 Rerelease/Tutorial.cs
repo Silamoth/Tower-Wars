@@ -207,8 +207,13 @@ namespace TTDLEO_2019_Rerelease
                     break;
                 case TutorialState.THIRDLEVELMEDIC:
                     spriteBatch.DrawString(font, "Not all soldiers are around to fight.  Some provide support to other soldiers.  For", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "example, the Medic can heal soldiers in front of it.  Try sending out a Swordsman", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "example, the Medic can heal soldiers in front of it.  Try sending out a Tough Guy", new Vector2(135f, 395f), Color.Black);
                     spriteBatch.DrawString(font, "followed by a Medic to see this in action.", new Vector2(135f, 410f), Color.Black);
+                    break;
+                case TutorialState.THIRDLEVELGENERAL:
+                    spriteBatch.DrawString(font, "Like the Medic, the General does not do any fighting; it instead supports other", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "soldiers.  It does so by boosting morale and increasing the damage the soldier in", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "front of it is able to deal.  Try sending a Tough Guy followed by a General to see this.", new Vector2(135f, 410f), Color.Black);
                     break;
             }
 
@@ -265,12 +270,22 @@ namespace TTDLEO_2019_Rerelease
                         tutorialState = TutorialState.THIRDLEVELMEDIC;
                         battleManager = new BattleManager(content, buttonTexture, -5);
                         showPopUp = false;
+
+                        timerSeconds = 0;
+                        timer = 0;
+
+                        battleManager.AddEnemy(new Enemy(2, 15));
                     }
                     else if (tutorialState == TutorialState.THIRDLEVELMEDIC)
                     {
                         tutorialState = TutorialState.THIRDLEVELGENERAL;
                         battleManager = new BattleManager(content, buttonTexture, -6);
                         showPopUp = false;
+
+                        timerSeconds = 0;
+                        timer = 0;
+
+                        battleManager.AddEnemy(new Enemy(2, 15));
                     }
                     break;
                 case ENDGAMERESULT.LOSS:

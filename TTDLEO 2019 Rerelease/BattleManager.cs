@@ -51,12 +51,14 @@ namespace TTDLEO_2019_Rerelease
         public void Update(ContentManager content, int timerSeconds, GameTime gameTime, Rectangle mouseRectangle, float scaleX,
             float scaleY, int screenWidth, int screenHeight, int updatesPerFrame, float startTime)
         {
-            SpawnEnemies(timerSeconds, content);
             UpdatePlayerControls(content, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight);
             UpdatePlayerTurrets(gameTime, content, screenWidth, screenHeight);
 
             soldierManager.Update(updatesPerFrame, gameTime, startTime, content, enemyTower, playerTower,
                 screenWidth, screenHeight, corpses);
+
+            for (int i = 0; i < updatesPerFrame; i++)
+                SpawnEnemies(timerSeconds, content);
 
             if (playerQueue.Count > 0)
             {
@@ -81,7 +83,6 @@ namespace TTDLEO_2019_Rerelease
             }
 
             //Update inputManager
-
             List<SoldierPurchases> purchases = inputManager.Update(mouseRectangle, Main.canClick, Main.gold, queue.Count, scaleX, scaleY);
 
             foreach (SoldierPurchases purchase in purchases)
@@ -157,14 +158,38 @@ namespace TTDLEO_2019_Rerelease
                         Main.goldSpent += 50;
                         queue.AddMember("Medic");
                     }
-                    if (purchase == SoldierPurchases.SWORDSMAN && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
+                    if (purchase == SoldierPurchases.TOUGHGUY && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
                     {
-                        playerQueue.Add((Queueable)new Swordsman(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        playerQueue.Add((Queueable)new ToughGuy(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
                         Main.canClick = false;
                         Main.incrementButtonTimer = true;
-                        Main.gold -= 50;
-                        Main.goldSpent += 50;
-                        queue.AddMember("Swordsman");
+                        Main.gold -= 20;
+                        Main.goldSpent += 20;
+                        queue.AddMember("Tough Guy");
+                    }
+
+                    return;
+                }
+
+                if (currentLevel == -6)
+                {
+                    if (purchase == SoldierPurchases.GENERAL && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 1)
+                    {
+                        playerQueue.Add((Queueable)new General(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                        Main.gold -= 60;
+                        Main.goldSpent += 60;
+                        queue.AddMember("General");
+                    }
+                    if (purchase == SoldierPurchases.TOUGHGUY && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
+                    {
+                        playerQueue.Add((Queueable)new ToughGuy(content, enemyTower.Position, new Vector2((float)((double)playerTower.Position.X + (double)playerTower.Rectangle.Width - 30.0), (float)((double)playerTower.Position.Y + (double)playerTower.Rectangle.Height - 55.0))));
+                        Main.canClick = false;
+                        Main.incrementButtonTimer = true;
+                        Main.gold -= 20;
+                        Main.goldSpent += 20;
+                        queue.AddMember("Tough Guy");
                     }
 
                     return;

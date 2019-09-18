@@ -95,6 +95,21 @@ namespace TTDLEO_2019_Rerelease
                             }
                         }
                     }
+
+                    if (playerTroop.Rectangle.Intersects(enemyTower.Rectangle))
+                    {
+                        playerTroop.IsMovingForward = false;
+                        playerTroop.SetRightAttack(gameTime);
+                        if (playerTroop.CanAttack)
+                        {
+                            enemyTower.Health -= playerTroop.Damage;
+                            playerTroop.CanAttack = false;
+                            playerTroop.IncrementAttackTimer = true;
+                            playerTroop.SoundSwing();
+                        }
+
+                        flag = false;
+                    }
                     if (flag)
                         playerTroop.IsMovingForward = true;
                 }
@@ -117,18 +132,7 @@ namespace TTDLEO_2019_Rerelease
                 }
                 foreach (Soldier playerTroop in playerTroops)
                 {
-                    if (playerTroop.Rectangle.Intersects(enemyTower.Rectangle))
-                    {
-                        playerTroop.IsMovingForward = false;
-                        playerTroop.SetRightAttack(gameTime);
-                        if (playerTroop.CanAttack)
-                        {
-                            enemyTower.Health -= playerTroop.Damage;
-                            playerTroop.CanAttack = false;
-                            playerTroop.IncrementAttackTimer = true;
-                            playerTroop.SoundSwing();
-                        }
-                    }
+                    
                 }
                 foreach (RangedSoldier playerRangedTroop in playerRangedTroops)
                 {

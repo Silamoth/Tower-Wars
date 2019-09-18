@@ -431,6 +431,7 @@ namespace TTDLEO_2019_Rerelease
 
     public float AttackTimer
     {
+        get { return attackTimer; }
       set
       {
         this.attackTimer = value;

@@ -213,11 +213,14 @@ namespace TTDLEO_2019_Rerelease
 
         protected override void Update(GameTime gameTime)
         {
-            timer += gameTime.ElapsedGameTime.TotalSeconds - (double)startTime;
-            while (timer > 1.0)
+            for (int i = 0; i < updatesPerFrame; i++)
             {
-                --timer;
-                ++timerSeconds;
+                timer += gameTime.ElapsedGameTime.TotalSeconds - (double)startTime;
+                while (timer > 1.0)
+                {
+                    --timer;
+                    ++timerSeconds;
+                }
             }
 
             if (!IsActive)
