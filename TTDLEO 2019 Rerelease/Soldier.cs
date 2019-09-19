@@ -18,8 +18,8 @@ namespace TTDLEO_2019_Rerelease
   {
     private bool isMovingForward = true;
     private float attackTimer = 0.0f;
-    private bool incrementAttackTimer = true;
-    private bool canAttack = false;
+    private bool incrementAttackTimer = false;
+    private bool canAttack = true;
     private bool isHit = false;
     private bool incrementHitTimer = false;
     private int hitTimer = 0;
