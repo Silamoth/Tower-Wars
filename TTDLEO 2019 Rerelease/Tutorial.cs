@@ -11,14 +11,14 @@ using Microsoft.Xna.Framework.Input;
 namespace TTDLEO_2019_Rerelease
 {
     enum TutorialState { FIRSTLEVEL, POSTFIRSTLEVEL, SECONDLEVEL, POSTSECONDLEVELONE, POSTSECONDLEVELTWO,
-        THIRDLEVELSWORDSMAN, THIRDLEVELARCHER, THIRDLEVELMEDIC, THIRDLEVELGENERAL, MAINMENU, OPTIONS, SHOP, LORE }
+        THIRDLEVELSWORDSMAN, THIRDLEVELARCHER, THIRDLEVELMEDIC, THIRDLEVELGENERAL, POSTTHIRDLEVEL, MAINMENUONE, SHOP, MAINMENUTWO, LORE, UPGRADETEST }
 
     class Tutorial
     {
         BattleManager battleManager;
         SpriteFont font, mediumFont;
         Button tutorialProceedButton;
-        Texture2D background, textBar, popUpTexture, buttonTexture;
+        Texture2D background, textBar, popUpTexture, buttonTexture, menuTexture, otherMenuBackground;
 
         Button speedUpButton, slowDownButton;
         Button replayButton, menuButton, nextButton;
@@ -31,7 +31,25 @@ namespace TTDLEO_2019_Rerelease
         double timer;
         int timerSeconds;
 
-        public Tutorial(ContentManager content, Texture2D buttonTexture, Texture2D background, Texture2D textBar, Texture2D popUpTexture)
+        Button mainArcheryButton;
+        Button exitButton;
+        Button upgradeButton;
+        Button loreButton;
+        Button menuOptionsButton;
+        Button gambleMenuButton;
+        List<Button> levelButtons;
+
+        Shop shop;
+
+        Button returnHomeButton;
+        List<Button> lockedLoreButtons;
+
+        static Random random = new Random();
+
+        Button endButton;
+
+        public Tutorial(ContentManager content, Texture2D buttonTexture, Texture2D background, Texture2D textBar, 
+            Texture2D popUpTexture, Texture2D menuTexture)
         {
             battleManager = new BattleManager(content, buttonTexture, -1);  //TODO: Handle
             font = content.Load<SpriteFont>("font");
@@ -52,6 +70,7 @@ namespace TTDLEO_2019_Rerelease
             this.textBar = textBar;
             this.popUpTexture = popUpTexture;
             this.buttonTexture = buttonTexture;
+            this.menuTexture = menuTexture;
 
             tutorialState = TutorialState.FIRSTLEVEL;
 
@@ -60,7 +79,7 @@ namespace TTDLEO_2019_Rerelease
             timerSeconds = 0;
         }
 
-        public void Update(GameTime gameTime, ContentManager content, Rectangle mouseRectangle, float scaleX,
+        public bool Update(GameTime gameTime, ContentManager content, Rectangle mouseRectangle, float scaleX,
             float scaleY, int screenWidth, int screenHeight, float startTime)
         {
             timer += gameTime.ElapsedGameTime.TotalSeconds - (double)startTime;
@@ -73,8 +92,7 @@ namespace TTDLEO_2019_Rerelease
             speedUpButton.Update(mouseRectangle, scaleX, scaleY);
             slowDownButton.Update(mouseRectangle, scaleX, scaleY);
 
-            if (tutorialState == TutorialState.FIRSTLEVEL || tutorialState == TutorialState.SECONDLEVEL || tutorialState == TutorialState.THIRDLEVELSWORDSMAN
-                || tutorialState == TutorialState.THIRDLEVELARCHER || tutorialState == TutorialState.THIRDLEVELMEDIC || tutorialState == TutorialState.THIRDLEVELGENERAL)
+            if (tutorialState < TutorialState.MAINMENUONE || tutorialState == TutorialState.UPGRADETEST)
             {
                 CheckForEndGame(content);
                 battleManager.Update(content, timerSeconds, gameTime, mouseRectangle, scaleX, scaleY, screenWidth, screenHeight,
@@ -145,6 +163,101 @@ namespace TTDLEO_2019_Rerelease
                     timer = 0;
                 }
             }
+            else if (tutorialState == TutorialState.POSTTHIRDLEVEL)
+            {
+                if (menuButton.IsActivated)
+                {
+                    tutorialState = TutorialState.MAINMENUONE;
+                    showPopUp = false;
+                }
+            }
+            else if (tutorialState == TutorialState.MAINMENUONE)
+            {
+                loreButton.Update(mouseRectangle, scaleX, scaleY);
+                upgradeButton.Update(mouseRectangle, scaleX, scaleY);
+                gambleMenuButton.Update(mouseRectangle, scaleX, scaleY);
+                mainArcheryButton.Update(mouseRectangle, scaleX, scaleY);
+                menuOptionsButton.Update(mouseRectangle, scaleX, scaleY);
+                exitButton.Update(mouseRectangle, scaleX, scaleY);
+
+                if (upgradeButton.IsActivated && Main.canClick)
+                {
+                    Main.Click();
+                    tutorialState = TutorialState.SHOP;
+
+                    otherMenuBackground = content.Load<Texture2D>("otherMenuBackground");
+                    shop = new Shop(content, buttonTexture);
+
+                    upgradeButton = new Button(new Rectangle(545, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Main Menu");
+                }
+            }
+            else if (tutorialState == TutorialState.SHOP)
+            {
+                upgradeButton.Update(mouseRectangle, scaleX, scaleY);
+                if (upgradeButton.IsActivated && Main.canClick)
+                {
+                    tutorialState = TutorialState.MAINMENUTWO;
+                    upgradeButton = new Button(new Rectangle(545, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Upgrade");
+                }
+            }
+            else if (tutorialState == TutorialState.MAINMENUTWO)
+            {
+                loreButton.Update(mouseRectangle, scaleX, scaleY);
+                upgradeButton.Update(mouseRectangle, scaleX, scaleY);
+                gambleMenuButton.Update(mouseRectangle, scaleX, scaleY);
+                mainArcheryButton.Update(mouseRectangle, scaleX, scaleY);
+                menuOptionsButton.Update(mouseRectangle, scaleX, scaleY);
+                exitButton.Update(mouseRectangle, scaleX, scaleY);
+
+                if (loreButton.IsActivated && Main.canClick)
+                {
+                    tutorialState = TutorialState.LORE;
+
+                    Main.Click();
+
+                    returnHomeButton = new Button(new Rectangle(25, 35, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Menu");
+                    lockedLoreButtons = new List<Button>();
+                    for (int y = 75; y < 195; y += 40)
+                    {
+                        for (int x = 25; x < 750; x += 125)
+                            lockedLoreButtons.Add(new Button(new Rectangle(x, y, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Locked"));
+                    }
+                }
+            }
+            else if (tutorialState == TutorialState.LORE)
+            {
+                returnHomeButton.Update(mouseRectangle, scaleX, scaleY);
+
+                if (returnHomeButton.IsActivated && Main.canClick)
+                {
+                    Main.Click();
+
+                    tutorialState = TutorialState.UPGRADETEST;
+
+                    battleManager = new BattleManager(content, buttonTexture, -7);
+                    battleManager.BuyArcher(content);
+                    battleManager.BuyTurretOne(content);
+                    battleManager.BuyTurretTwo(content);
+                    battleManager.BuyWizard(content);
+
+                    endButton = new Button(new Rectangle(300, 50, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "End");
+                }
+            }
+            else if (tutorialState == TutorialState.UPGRADETEST)
+            {
+                battleManager.RestoreHealth();
+                battleManager.SetMana(500);
+
+                if (random.Next(0, 100) == 0)
+                    battleManager.AddEnemy(new Enemy(random.Next(0, 9), 1));
+
+                endButton.Update(mouseRectangle, scaleX, scaleY);
+
+                if (endButton.IsActivated)
+                    return true;
+            }
+
+            return false;
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle mouseRectangle, float scaleX, float scaleY)
@@ -153,7 +266,8 @@ namespace TTDLEO_2019_Rerelease
 
             spriteBatch.DrawString(font, "Gold: " + Main.gold.ToString(), new Vector2(29f, 15f), Color.Black);
 
-            battleManager.Draw(spriteBatch, mouseRectangle, scaleX, scaleY);
+            if (tutorialState < TutorialState.MAINMENUONE || tutorialState == TutorialState.UPGRADETEST)
+                battleManager.Draw(spriteBatch, mouseRectangle, scaleX, scaleY);
 
             speedUpButton.Draw(spriteBatch);
             slowDownButton.Draw(spriteBatch);
@@ -177,9 +291,9 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "Level: T2", new Vector2(105, 15), Color.Black);
 
                     spriteBatch.DrawString(font, "In all other levels, you will have enemies to fight.  Send out Commoners like you", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "did last level in order to fight these enemies and attack their tower.", new Vector2(135f, 395f), Color.Black);
-                    //spriteBatch.DrawString(font, "level, move on to the next level, or return to the menu.  For now, click on the", new Vector2(135f, 410f), Color.Black);
-                    //spriteBatch.DrawString(font, "Next Level button to proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
+                    spriteBatch.DrawString(font, "did last level in order to fight these enemies and attack their tower.  Take note", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "of the Speed Up and Slow Down buttons on the right edge of the screen.  These can be ", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "used to make time pass more quickly or slowly within a level.", new Vector2(135f, 425), Color.Black);
                     break;
                 case TutorialState.POSTSECONDLEVELONE:
                     spriteBatch.DrawString(font, "As you can see, you will have to spend gold in order to beat levels.  You must", new Vector2(135f, 380f), Color.Black);
@@ -215,7 +329,95 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "soldiers.  It does so by boosting morale and increasing the damage the soldier in", new Vector2(135f, 395f), Color.Black);
                     spriteBatch.DrawString(font, "front of it is able to deal.  Try sending a Tough Guy followed by a General to see this.", new Vector2(135f, 410f), Color.Black);
                     break;
+                case TutorialState.POSTTHIRDLEVEL:
+                    spriteBatch.DrawString(font, "Now that you've mastered combat with soldiers, it's time to see what else you need to", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "know in order to be successful.  Click the Menu Button to go to the game's main menu.", new Vector2(135f, 395f), Color.Black);
+                    break;
+                case TutorialState.MAINMENUONE:
+                    spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
+                    spriteBatch.DrawString(mediumFont, "TOWERS THAT DON'T LIKE EACH OTHER", new Vector2(260, 20), Color.White);
+                    int num = 1;
+                    foreach (Button levelButton in levelButtons)
+                    {
+                        levelButton.Draw(spriteBatch);
+                        num++;
+                    }
+
+                    spriteBatch.DrawString(font, "Gold: " + Main.gold.ToString(), new Vector2(10f, 40f), Color.Black);
+                    upgradeButton.Draw(spriteBatch);
+                    loreButton.Draw(spriteBatch);
+                    gambleMenuButton.Draw(spriteBatch);
+                    mainArcheryButton.Draw(spriteBatch);
+                    menuOptionsButton.Draw(spriteBatch);
+
+                    exitButton.Draw(spriteBatch);
+
+                    spriteBatch.DrawString(font, "Welcome to the Main Menu!  This screen serves as your base of operations for all actions", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "in the game.  From here, you can visit the shop, play different levels, exit the game,", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "access mini games, change the settings, and more.  To start out, click the Upgrade Button", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "to access the shop.", new Vector2(135f, 425), Color.Black);
+                    break;
+                case TutorialState.SHOP:
+                    spriteBatch.Draw(otherMenuBackground, new Vector2(0.0f, 0.0f), Color.White);
+
+                    spriteBatch.DrawString(mediumFont, "SHOP", new Vector2(310f, 10f), Color.Black);
+                    upgradeButton.Draw(spriteBatch);
+
+                    spriteBatch.DrawString(font, "Gold: " + Main.gold.ToString(), new Vector2(10f, 40f), Color.Black);
+                    shop.Draw(spriteBatch);
+
+                    spriteBatch.DrawString(font, "In the shop, you can purchase a number of upgrades to aid you in your fight against Lord", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "Morgoroth.  Later in the tutorial, you'll have the opportunity to test out these various", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "upgrades.  For now, click the Main Menu button to return to the menu.", new Vector2(135f, 410f), Color.Black);
+                    break;
+                case TutorialState.MAINMENUTWO:
+                    spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
+                    spriteBatch.DrawString(mediumFont, "TOWERS THAT DON'T LIKE EACH OTHER", new Vector2(260, 20), Color.White);
+                    num = 1;
+                    foreach (Button levelButton in levelButtons)
+                    {
+                        levelButton.Draw(spriteBatch);
+                        num++;
+                    }
+
+                    spriteBatch.DrawString(font, "Gold: " + Main.gold.ToString(), new Vector2(10f, 40f), Color.Black);
+                    upgradeButton.Draw(spriteBatch);
+                    loreButton.Draw(spriteBatch);
+                    gambleMenuButton.Draw(spriteBatch);
+                    mainArcheryButton.Draw(spriteBatch);
+                    menuOptionsButton.Draw(spriteBatch);
+
+                    exitButton.Draw(spriteBatch);
+
+                    spriteBatch.DrawString(font, "Now that you're back at the menu, click on the Lore button to explore thelore of the", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "land.", new Vector2(135f, 395f), Color.Black);
+                    break;
+                case TutorialState.LORE:
+                    spriteBatch.Draw(otherMenuBackground, new Vector2(0.0f, 0.0f), Color.White);
+                    returnHomeButton.Draw(spriteBatch);
+                    spriteBatch.DrawString(mediumFont, "LORE", new Vector2(337f, 15f), Color.Black);
+
+                    foreach (Button lockedLoreButton in lockedLoreButtons)
+                    {
+                        lockedLoreButton.Draw(spriteBatch);
+                    }
+
+                    spriteBatch.DrawString(font, "When you win a level, you may find that you have learned a new tidbit of information ", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "about this world and its history.  You can view all that information from here.  ", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "Everything is currently locked, but you will begin unlocking lore once you win some", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "levels.  For now, click the Menu button to proceed with the tutorial.", new Vector2(135f, 425), Color.Black);
+                    break;
+                case TutorialState.UPGRADETEST:
+                    spriteBatch.DrawString(font, "While the Menu button will normally bring you back to the menu, we've put you into", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "an environment to experiment.  We've unlocked all upgrades, and your tower will not", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "take any damage.  Random enemies will spawn for you to fight.  Use this as an", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "opportunity to experiment and get a feel for combat.  Click the End button to exit.", new Vector2(135f, 425), Color.Black);
+
+                    endButton.Draw(spriteBatch);
+                    break;
             }
+
+            spriteBatch.Draw(textBar, new Vector2(125f, 375f), new Rectangle?(), Color.White * 0.6f, 0.0f, Vector2.Zero, 0.85f, SpriteEffects.None, 1f);
 
             if (showPopUp)
             {
@@ -235,12 +437,13 @@ namespace TTDLEO_2019_Rerelease
                 if (didWin)
                     nextButton.Draw(spriteBatch);
             }
-
-            spriteBatch.Draw(textBar, new Vector2(125f, 375f), new Rectangle?(), Color.White * 0.6f, 0.0f, Vector2.Zero, 0.85f, SpriteEffects.None, 1f);
         }
 
         void CheckForEndGame(ContentManager content)
         {
+            if (tutorialState == TutorialState.UPGRADETEST)
+                return;
+
             ENDGAMERESULT result = battleManager.CheckForEndGame(content);
 
             switch (result)
@@ -273,8 +476,6 @@ namespace TTDLEO_2019_Rerelease
 
                         timerSeconds = 0;
                         timer = 0;
-
-                        battleManager.AddEnemy(new Enemy(2, 15));
                     }
                     else if (tutorialState == TutorialState.THIRDLEVELMEDIC)
                     {
@@ -284,8 +485,18 @@ namespace TTDLEO_2019_Rerelease
 
                         timerSeconds = 0;
                         timer = 0;
+                    }
+                    else if (tutorialState == TutorialState.THIRDLEVELGENERAL)
+                    {
+                        tutorialState = TutorialState.POSTTHIRDLEVEL;
+                        levelButtons = new List<Button>();
 
-                        battleManager.AddEnemy(new Enemy(2, 15));
+                        loreButton = new Button(new Rectangle(285, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Lore");
+                        upgradeButton = new Button(new Rectangle(545, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Upgrade");
+                        gambleMenuButton = new Button(new Rectangle(420, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Gamble");
+                        mainArcheryButton = new Button(new Rectangle(150, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Archery");
+                        menuOptionsButton = new Button(new Rectangle(15, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Options");
+                        exitButton = new Button(new Rectangle(680, 425, buttonTexture.Width, buttonTexture.Height), buttonTexture, content, "Exit");
                     }
                     break;
                 case ENDGAMERESULT.LOSS:

@@ -339,5 +339,10 @@ namespace TTDLEO_2019_Rerelease
         return this.aiming;
       }
     }
+
+    public int Mana
+        {
+            set { mana = value; }
+        }
   }
 }

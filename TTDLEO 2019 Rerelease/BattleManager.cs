@@ -64,20 +64,33 @@ namespace TTDLEO_2019_Rerelease
             {
                 float distance = soldierManager.GetDistance(playerTower.Rectangle);
 
+                bool spawn = true;
+
                 if (distance > 80)
                 {
-                    soldierManager.AddSoldier(playerQueue[0]);
-
-                    playerQueue.RemoveAt(0);
-                    queue.RemoveMember();
-                    if (Main.random.Next(0, 4) == 0)
+                    if (currentLevel == -6)     //Hard coding for tutorial...maybe refactor at some point?
                     {
-                        if (chargeEffect == null)
-                            chargeEffect = content.Load<SoundEffect>("chargeEffect");
-                        if (chargeInstance == null)
-                            chargeInstance = chargeEffect.CreateInstance();
-                        chargeInstance.Volume = Main.volume;
-                        chargeInstance.Play();
+                        if (playerQueue[0] is ToughGuy && playerQueue.Count != 2)
+                        {
+                            spawn = false;
+                        }
+                    }
+
+                    if (spawn)
+                    {
+                        soldierManager.AddSoldier(playerQueue[0]);
+
+                        playerQueue.RemoveAt(0);
+                        queue.RemoveMember();
+                        if (Main.random.Next(0, 4) == 0)
+                        {
+                            if (chargeEffect == null)
+                                chargeEffect = content.Load<SoundEffect>("chargeEffect");
+                            if (chargeInstance == null)
+                                chargeInstance = chargeEffect.CreateInstance();
+                            chargeInstance.Volume = Main.volume;
+                            chargeInstance.Play();
+                        }
                     }
                 }
             }
@@ -157,6 +170,8 @@ namespace TTDLEO_2019_Rerelease
                         Main.gold -= 50;
                         Main.goldSpent += 50;
                         queue.AddMember("Medic");
+
+                        AddEnemy(new Enemy(1, 1));
                     }
                     if (purchase == SoldierPurchases.TOUGHGUY && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
                     {
@@ -181,6 +196,8 @@ namespace TTDLEO_2019_Rerelease
                         Main.gold -= 60;
                         Main.goldSpent += 60;
                         queue.AddMember("General");
+
+                        AddEnemy(new Enemy(2, 1));
                     }
                     if (purchase == SoldierPurchases.TOUGHGUY && (soldierManager.PlayerSoldierCount + playerQueue.Count) == 0)
                     {
@@ -619,6 +636,11 @@ namespace TTDLEO_2019_Rerelease
         public void AddEnemy(Enemy enemy)
         {
             enemies.Add(enemy);
+        }
+
+        public void SetMana(int num)
+        {
+            wizardTower.Mana = num;
         }
     }
 }

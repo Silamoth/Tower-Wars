@@ -190,8 +190,9 @@ namespace TTDLEO_2019_Rerelease
 
                 textBar = Content.Load<Texture2D>("textBar");
                 popUpTexture = Content.Load<Texture2D>("popUp");
+                menuTexture = Content.Load<Texture2D>("menuBackground");
 
-                tutorial = new Tutorial(Content, buttonTexture, background, textBar, popUpTexture);
+                tutorial = new Tutorial(Content, buttonTexture, background, textBar, popUpTexture, menuTexture);
             }
             else
                 state = States.MENU;
@@ -297,8 +298,13 @@ namespace TTDLEO_2019_Rerelease
             else if (this.state == States.GAMBLING)
                 UpdateInvesting();
             else if (this.state == States.TUTORIAL)
-                tutorial.Update(gameTime, Content, mouseRectangle, scaleX, scaleY,
+            {
+                bool isComplete = tutorial.Update(gameTime, Content, mouseRectangle, scaleX, scaleY,
                     Window.ClientBounds.Width, Window.ClientBounds.Height, startTime);
+
+                if (isComplete)
+                    this.state = States.MENU;
+            }
             else if (this.state == States.OPTIONS)
                 UpdateOptions();
             else if (this.state == States.FINALBOSS)
@@ -390,23 +396,7 @@ namespace TTDLEO_2019_Rerelease
             }
             else if (state == States.MENU || state == States.HELPMENU)
             {
-                spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
-                spriteBatch.DrawString(midLargeFont, "TOWERS THAT DON'T LIKE EACH OTHER", new Vector2(260, 20), Color.White);
-                int num = 1;
-                foreach (Button levelButton in levelButtons)
-                {
-                    levelButton.Draw(spriteBatch);
-                    num++;
-                }
-
-                spriteBatch.DrawString(font, "Gold: " + gold.ToString(), new Vector2(10f, 40f), Color.Black);
-                upgradeButton.Draw(spriteBatch);
-                loreButton.Draw(spriteBatch);
-                gambleMenuButton.Draw(spriteBatch);
-                mainArcheryButton.Draw(spriteBatch);
-                menuOptionsButton.Draw(spriteBatch);
-
-                exitButton.Draw(spriteBatch);
+                DrawMenu();
             }
             else if (state == States.UPGRADING)
             {
@@ -745,6 +735,27 @@ namespace TTDLEO_2019_Rerelease
             PlayMenuMusic();
         }
 
+        public void DrawMenu()
+        {
+            spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
+            spriteBatch.DrawString(midLargeFont, "TOWERS THAT DON'T LIKE EACH OTHER", new Vector2(260, 20), Color.White);
+            int num = 1;
+            foreach (Button levelButton in levelButtons)
+            {
+                levelButton.Draw(spriteBatch);
+                num++;
+            }
+
+            spriteBatch.DrawString(font, "Gold: " + gold.ToString(), new Vector2(10f, 40f), Color.Black);
+            upgradeButton.Draw(spriteBatch);
+            loreButton.Draw(spriteBatch);
+            gambleMenuButton.Draw(spriteBatch);
+            mainArcheryButton.Draw(spriteBatch);
+            menuOptionsButton.Draw(spriteBatch);
+
+            exitButton.Draw(spriteBatch);
+        }
+
         private void UpdateUpgrades()
         {
             upgradeButton.Update(mouseRectangle, scaleX, scaleY);
@@ -908,7 +919,7 @@ namespace TTDLEO_2019_Rerelease
                     nextButton = new Button(new Rectangle(477, 325, buttonTexture.Width, buttonTexture.Height), buttonTexture, Content, "Next Level");
                     PlayMainGameMusic();
 
-                    tutorial = new Tutorial(Content, buttonTexture, background, textBar, popUpTexture);
+                    tutorial = new Tutorial(Content, buttonTexture, background, textBar, popUpTexture, menuTexture);
                 }
                 canMoveForward = false;
                 incrementForwardTimer = true;

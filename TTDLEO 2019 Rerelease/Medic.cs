@@ -19,7 +19,7 @@ namespace TTDLEO_2019_Rerelease
       this.Target = target;
       this.LoadContent(content);
       this.Stat = 1;
-      this.Speed = 1f;
+      this.Speed = 1.1f;
       this.Health = 2;
       this.ActTime = 450;
       this.Reward = 3;
