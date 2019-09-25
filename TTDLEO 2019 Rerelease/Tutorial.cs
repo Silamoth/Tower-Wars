@@ -277,47 +277,47 @@ namespace TTDLEO_2019_Rerelease
                 case TutorialState.FIRSTLEVEL:
                     spriteBatch.DrawString(font, "Level: T1", new Vector2(105, 15), Color.Black);
 
-                    spriteBatch.DrawString(font, "Welcome to Tower Conquest!  In this game, you send out units to defend your", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "tower and attack your enemy's tower.  To begin, click the commoner button to", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "send out a commoner, the most basic soldier in the game.", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "Welcome to Tower Conquest!  In this game, you send out units to defend your tower", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "and attack your enemy's tower.  To begin, click the commoner button to send out a", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "commoner, the most basic soldier in the game.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.POSTFIRSTLEVEL:
-                    spriteBatch.DrawString(font, "Congratulations!  You've made it past the first tutorial level!  This screen is", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "shown after every level.  Here you can find stats regarding the level, replay the", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "level, move on to the next level, or return to the menu.  For now, click on the", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "Next Level button to proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
+                    spriteBatch.DrawString(font, "Congratulations!  You've made it past the first tutorial level!  This screen is shown", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "after every level.  Here you can find stats regarding the level, replay the level, move", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "on to the next level, or return to the menu.  For now, click on the Next Level button to", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "proceed to the next level of the tutorial.", new Vector2(135f, 425), Color.Black);
                     break;
                 case TutorialState.SECONDLEVEL:
                     spriteBatch.DrawString(font, "Level: T2", new Vector2(105, 15), Color.Black);
 
-                    spriteBatch.DrawString(font, "In all other levels, you will have enemies to fight.  Send out Commoners like you", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "did last level in order to fight these enemies and attack their tower.  Take note", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "of the Speed Up and Slow Down buttons on the right edge of the screen.  These can be ", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "In all other levels, you will have enemies to fight.  Send out Commoners like you did", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "last level in order to fight these enemies and attack their tower.  Take note of the", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "Speed Up and Slow Down buttons on the right edge of the screen.  These can be", new Vector2(135f, 410f), Color.Black);
                     spriteBatch.DrawString(font, "used to make time pass more quickly or slowly within a level.", new Vector2(135f, 425), Color.Black);
                     break;
                 case TutorialState.POSTSECONDLEVELONE:
-                    spriteBatch.DrawString(font, "As you can see, you will have to spend gold in order to beat levels.  You must", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "be smart about how you spend your gold or else you will run out.  For example, ", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "don't send out a very strong unit like a Swordsman against something weak like", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "a Commoner.", new Vector2(135f, 425), Color.Black);
+                    spriteBatch.DrawString(font, "As you can see, you will have to spend gold in order to beat levels.  You must be", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "smart about how you spend your gold or else you will run out.  For example, don't", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "send out a very strong unit like a Swordsman against something weak like a.", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "Commoner.", new Vector2(135f, 425), Color.Black);
 
                     spriteBatch.DrawString(font, "Press any button to continue...", new Vector2(300f, 355f), Color.White);
                     break;
                 case TutorialState.POSTSECONDLEVELTWO:
                     spriteBatch.DrawString(font, "Now that you've experienced the basics of combat, let's explore some more", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "advanced soldiers and their capabilities.  Click on the Next Level button to", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "begin.", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "advanced soldiers and their capabilities.  Click on the Next Level button to begin", new Vector2(135f, 395f), Color.Black);
+                    //spriteBatch.DrawString(font, "begin.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.THIRDLEVELSWORDSMAN:
-                    spriteBatch.DrawString(font, "There are several soldiers specializing in melee combat.  They effectively", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "function as stronger versions of the Commoner you used before.  These include", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "the Tough Guy, Brute, and Swordsman.  For now, click the Swordsman button to", new Vector2(135f, 410f), Color.Black);
-                    spriteBatch.DrawString(font, "send out a Swordsman.", new Vector2(135f, 425), Color.Black);
+                    spriteBatch.DrawString(font, "There are several soldiers specializing in melee combat.  They effectively function", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "as stronger versions of the Commoner you used before.  These include the Tough", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "Guy, Brute, and Swordsman.  For now, click the Swordsman button to send out a", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "Swordsman.", new Vector2(135f, 425), Color.Black);
                     break;
                 case TutorialState.THIRDLEVELARCHER:
                     spriteBatch.DrawString(font, "Sometimes you may find you want a soldier that can attack from a distance.  The", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "Archer is perfect for this.  Try sending out an Archer to see how it works.  Note", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "that the Archer can attack from behind another soldier.", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "Archer is perfect for this.  Try sending out an Archer to see how it works.  Note that", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "the Archer can attack from behind another soldier.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.THIRDLEVELMEDIC:
                     spriteBatch.DrawString(font, "Not all soldiers are around to fight.  Some provide support to other soldiers.  For", new Vector2(135f, 380f), Color.Black);
@@ -330,8 +330,9 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "front of it is able to deal.  Try sending a Tough Guy followed by a General to see this.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.POSTTHIRDLEVEL:
-                    spriteBatch.DrawString(font, "Now that you've mastered combat with soldiers, it's time to see what else you need to", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "know in order to be successful.  Click the Menu Button to go to the game's main menu.", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "Now that you've mastered combat with soldiers, it's time to see what else you need", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "to know in order to be successful.  Click the Menu Button to go to the game's main", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "menu.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.MAINMENUONE:
                     spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
@@ -366,9 +367,9 @@ namespace TTDLEO_2019_Rerelease
                     spriteBatch.DrawString(font, "Gold: " + Main.gold.ToString(), new Vector2(10f, 40f), Color.Black);
                     shop.Draw(spriteBatch);
 
-                    spriteBatch.DrawString(font, "In the shop, you can purchase a number of upgrades to aid you in your fight against Lord", new Vector2(135f, 380f), Color.Black);
-                    spriteBatch.DrawString(font, "Morgoroth.  Later in the tutorial, you'll have the opportunity to test out these various", new Vector2(135f, 395f), Color.Black);
-                    spriteBatch.DrawString(font, "upgrades.  For now, click the Main Menu button to return to the menu.", new Vector2(135f, 410f), Color.Black);
+                    spriteBatch.DrawString(font, "In the shop, you can purchase a number of upgrades to aid you in your fight against", new Vector2(135f, 380f), Color.Black);
+                    spriteBatch.DrawString(font, "Lord Morgoroth.  Later in the tutorial, you'll have the opportunity to test out these", new Vector2(135f, 395f), Color.Black);
+                    spriteBatch.DrawString(font, "various upgrades.  For now, click the Main Menu button to return to the menu.", new Vector2(135f, 410f), Color.Black);
                     break;
                 case TutorialState.MAINMENUTWO:
                     spriteBatch.Draw(menuTexture, new Rectangle(0, -20, (int)(menuTexture.Width), (int)(menuTexture.Height)), Color.White);
